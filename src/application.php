@@ -41,8 +41,28 @@ $app->get('/login', function(Request $request) use($app) {
     ));
 });
 
-$app->get('/', function(Request $request) use($app) {
+$app->get('/', function() use($app) {
     return $app['twig']->render('index.html.twig');
+});
+
+$app->get('/expenses/add', function() use($app) {
+    $persons = $app['db']->getMapFor('\Model\Person')
+        ->findAll();
+
+    return $app['twig']->render(
+        'expense/add.html.twig',
+        compact('persons')
+    );
+});
+
+$app->post('/expenses/add', function(Request $request) use($app) {
+    $map = $app['db']->getMapFor('\Model\Expense');
+
+    $expense = $map->createObject();
+    $expense->hydrate($request->request->get('expense'));
+    $map->saveOne($expense);
+
+    return $app->redirect('/');
 });
 
 return $app;
