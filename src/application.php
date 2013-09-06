@@ -4,6 +4,20 @@ use \Symfony\Component\HttpFoundation\Request;
 
 $app = require __DIR__ . '/bootstrap.php';
 
+$app['users'] = $app->share(function() use ($app) {
+    $users = array();
+
+    $persons = $app['db']->getMapFor('\Model\Person')
+        ->findAll();
+    foreach ($persons as $person) {
+        $users[$person->email] = array(
+            'ROLE_ADMIN',
+            $person->password,
+        );
+    }
+    return $users;
+});
+
 $app['security.firewalls'] = array(
     'dev' => array(
         'pattern' => '^/(_(profiler|wdt)|css|images|js)/',
@@ -16,7 +30,7 @@ $app['security.firewalls'] = array(
         'pattern' => '^.*$',
         'form' => array('login_path' => '/login', 'check_path' => '/admin/login_check'),
         'logout' => array('logout_path' => '/logout'),
-        'users' => $app['config']['users'],
+        'users' => $app['users'],
     ),
 );
 

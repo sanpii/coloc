@@ -32,6 +32,10 @@ $app->register(new PommServiceProvider(), array(
     'pomm.databases' => $app['config']['pomm'],
 ));
 
+$app['db'] = $app->share(function() use ($app) {
+    return $app['pomm']->createConnection();
+});
+
 if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
     $app->register(new UrlGeneratorServiceProvider());
     $app->register(new ServiceControllerServiceProvider());
