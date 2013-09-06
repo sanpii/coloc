@@ -1,0 +1,24 @@
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Payeur</th>
+            <th>Magasin</th>
+            <th>Price</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.id }}</td>
+                <td>{{ expense.created | date('d/m/Y') }}</td>
+                <td>{{ expense.person_id }}</td>
+                <td>{{ expense.shop }}</td>
+                <td>{{ expense.price | number_format(2) }} €</td>
+                <td>{{ expense.description }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

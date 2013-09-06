@@ -1,4 +1,10 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
+    <a href="/expenses/add" title="Nouveau payement">
+        <span class="glyphicon glyphicon-plus-sign"></span>
+    </a>
+    <hr />
+
+    {{ include('expense/list.html.twig', { 'expenses': expenses }) }}
 {% endblock %}

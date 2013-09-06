@@ -42,7 +42,12 @@ $app->get('/login', function(Request $request) use($app) {
 });
 
 $app->get('/', function() use($app) {
-    return $app['twig']->render('index.html.twig');
+    $expenses = $app['db']->getMapFor('\Model\Expense')
+        ->findWhere('payment_id IS NULL');
+    return $app['twig']->render(
+        'index.html.twig',
+        compact('expenses')
+    );
 });
 
 $app->get('/expenses/add', function() use($app) {
@@ -62,6 +67,8 @@ $app->post('/expenses/add', function(Request $request) use($app) {
     $expense->hydrate($request->request->get('expense'));
     $map->saveOne($expense);
 
+    $app['session']->getFlashBag()
+        ->add('success', 'Payement ajouté');
     return $app->redirect('/');
 });
 
