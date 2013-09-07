@@ -9,13 +9,15 @@
         <div class="container">
             <div class="navbar navbar-default">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Coloc</a>
+                    <a class="navbar-brand" href="/">Coloc</a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="/">Home</a></li>
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><a href="/expenses">Achats</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
                         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <li><a href="/logout">Logout</a></li>
+                            <li><a href="/logout">Déconnexion</a></li>
                         {% endif %}
                     </ul>
                 </div>

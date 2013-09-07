@@ -50,6 +50,15 @@ $app->get('/', function() use($app) {
     );
 });
 
+$app->get('/expenses', function() use($app) {
+    $expenses = $app['db']->getMapFor('\Model\Expense')
+        ->findAll();
+    return $app['twig']->render(
+        'index.html.twig',
+        compact('expenses')
+    );
+});
+
 $app->get('/expenses/add', function() use($app) {
     $persons = $app['db']->getMapFor('\Model\Person')
         ->findAll();
