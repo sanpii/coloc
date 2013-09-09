@@ -63,7 +63,7 @@ $app->get('/expenses', function(Request $request) use($app) {
         $where = 'payment_id IS NULL';
     }
     $pager = $app['db']->getMapFor('\Model\Expense')
-        ->paginateFindWhere($where, [], null, $limit, $page);
+        ->paginateFindWhere($where, [], 'ORDER BY created DESC', $limit, $page);
     return $app['twig']->render(
         'index.html.twig',
         compact('pager', 'limit')
