@@ -78,24 +78,65 @@ $app->get('/expenses', function(Request $request) use($app) {
 });
 
 $app->get('/expenses/add', function() use($app) {
-    $persons = $app['db']->getMapFor('\Model\Person')
-        ->findAll();
-
-    return $app['twig']->render(
-        'expense/add.html.twig',
-        compact('persons')
+    return $app->handle(
+        Request::create('/expenses/-1/edit', 'GET'),
+        HttpKernelInterface::SUB_REQUEST
     );
 });
 
 $app->post('/expenses/add', function(Request $request) use($app) {
+    return $app->handle(
+        Request::create('/expenses/-1/edit', 'POST', $request->request->all()),
+        HttpKernelInterface::SUB_REQUEST
+    );
+});
+
+$app->get('/expenses/{id}/edit', function($id) use($app) {
     $map = $app['db']->getMapFor('\Model\Expense');
 
-    $expense = $map->createObject();
+    if ($id > 0) {
+        $expense = $map->findByPk(['id' => $id]);
+        if (is_null($expense)) {
+            $app->abort(404, "Dépense #$id inconnue");
+        }
+    }
+    else {
+        $expense = $map->createObject([
+            'id' => $id,
+            'price' => 0,
+            'shop' => '',
+            'description' => '',
+            'created' => date('d-m-Y'),
+        ]);
+    }
+
+    $persons = $app['db']->getMapFor('\Model\Person')
+        ->findAll();
+
+    return $app['twig']->render(
+        'expense/edit.html.twig',
+        compact('expense', 'persons')
+    );
+});
+
+$app->post('/expenses/{id}/edit', function(Request $request, $id) use($app) {
+    $map = $app['db']->getMapFor('\Model\Expense');
+
+    if ($id > 0) {
+        $expense = $map->findByPk(['id' => $id]);
+        if (is_null($expense)) {
+            $app->abort(404, "Dépense #$id inconnue");
+        }
+    }
+    else {
+        $expense = $map->createObject();
+    }
+
     $expense->hydrate($request->request->get('expense'));
     $map->saveOne($expense);
 
     $app['session']->getFlashBag()
-        ->add('success', 'Payement ajouté');
+        ->add('success', 'Paiement sauvegardé');
     return $app->redirect('/');
 });
 
@@ -107,10 +148,10 @@ $app->get('/expenses/{id}/delete', function($id) use($app) {
         $map->deleteOne($expense);
 
         $app['session']->getFlashBag()
-            ->add('success', 'Payement supprimé');
+            ->add('success', 'Paiement supprimé');
     }
     else {
-        $app->abort(404, "Dépense $id inconnée");
+        $app->abort(404, "Dépense $id inconnue");
     }
 
     return $app->redirect('/');

@@ -2,14 +2,23 @@
 
 {% block content %}
 
-    <form method="post" action="/expenses/add" class="form-horizontal" role="form">
+    {% if expense.id > 0 %}
+        <form method="post" action="/expenses/{{ expense.id }}/edit" class="form-horizontal" role="form">
+            <input type="hidden" name="expense[id]" value="{{ expense.id }}" />
+    {% else %}
+        <form method="post" action="/expenses/add" class="form-horizontal" role="form">
+    {% endif %}
 
         <div class="form-group">
             <label for="person" class="col-lg-2">Payeur</label>
             <div class="col-lg-10">
                 <select class="form-control" name="expense[person_id]" required="required">
                     {% for person in persons %}
-                        <option value="{{ person.id }}">{{ person.name }}</option>
+                        {% set selected = '' %}
+                        {% if person.id == expense.person_id %}
+                            {% set selected = 'selected="selected"' %}
+                        {% endif %}
+                        <option value="{{ person.id }}" {{ selected }}>{{ person.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -22,6 +31,7 @@
                     <input
                         type="number"
                         name="expense[price]"
+                        value="{{ expense.price }}"
                         class="form-control"
                         required="required"
                         pattern="[0-9]+(\.[0-9][0-9]?)?"
@@ -38,6 +48,7 @@
                 <input
                     type="text"
                     name="expense[shop]"
+                    value="{{ expense.shop }}"
                     class="form-control"
                     required="required"
                 />
@@ -49,6 +60,7 @@
             <div class="col-lg-10">
                 <input
                     type="text"
+                    value="{{ expense.description }}"
                     name="expense[description]"
                     class="form-control"
                 />
@@ -60,6 +72,7 @@
             <div class="col-lg-10">
                 <input
                     type="date"
+                    value="{{ expense.created|date('d-m-Y') }}"
                     name="expense[created]"
                     class="form-control"
                 />
