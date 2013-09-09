@@ -5,40 +5,40 @@ use \Symfony\Component\HttpFoundation\Request;
 $app = require __DIR__ . '/bootstrap.php';
 
 $app['users'] = $app->share(function() use ($app) {
-    $users = array();
+    $users = [];
 
     $persons = $app['db']->getMapFor('\Model\Person')
         ->findAll();
     foreach ($persons as $person) {
-        $users[$person->email] = array(
+        $users[$person->email] = [
             'ROLE_ADMIN',
             $person->password,
-        );
+        ];
     }
     return $users;
 });
 
-$app['security.firewalls'] = array(
-    'dev' => array(
+$app['security.firewalls'] = [
+    'dev' => [
         'pattern' => '^/(_(profiler|wdt)|css|images|js)/',
-    ),
-    'login' => array(
+    ],
+    'login' => [
         'pattern' => '^/login$',
         'anonymous' => true,
-    ),
-    'default' => array(
+    ],
+    'default' => [
         'pattern' => '^.*$',
-        'form' => array('login_path' => '/login', 'check_path' => '/admin/login_check'),
-        'logout' => array('logout_path' => '/logout'),
+        'form' => ['login_path' => '/login', 'check_path' => '/admin/login_check'],
+        'logout' => ['logout_path' => '/logout'],
         'users' => $app['users'],
-    ),
-);
+    ],
+];
 
 $app->get('/login', function(Request $request) use($app) {
-    return $app['twig']->render('login.html.twig', array(
+    return $app['twig']->render('login.html.twig', [
         'error' => $app['security.last_error']($request),
         'last_username' => $app['session']->get('_security.last_username'),
-    ));
+    ]);
 });
 
 $app->get('/', function(Request $request) use($app) {
