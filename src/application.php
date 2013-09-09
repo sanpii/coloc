@@ -99,4 +99,21 @@ $app->post('/expenses/add', function(Request $request) use($app) {
     return $app->redirect('/');
 });
 
+$app->get('/expenses/{id}/delete', function($id) use($app) {
+    $map = $app['db']->getMapFor('\Model\Expense');
+
+    $expense = $map->findByPk(['id' => $id]);
+    if ($expense !== null) {
+        $map->deleteOne($expense);
+
+        $app['session']->getFlashBag()
+            ->add('success', 'Payement supprimé');
+    }
+    else {
+        $app->abort(404, "Dépense $id inconnée");
+    }
+
+    return $app->redirect('/');
+});
+
 return $app;

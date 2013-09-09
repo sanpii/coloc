@@ -7,6 +7,7 @@
             <th>Magasin</th>
             <th>Price</th>
             <th>Description</th>
+            <th> </th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +20,9 @@
                 <td>{{ expense.shop }}</td>
                 <td>{{ expense.price | number_format(2) }} €</td>
                 <td>{{ expense.description }}</td>
+                <td>
+                    <a onclick="return confirm('Êtes vous sûr ?');" href="/expenses/{{ expense.id }}/delete" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                </td>
             </tr>
             {% set total = total + expense.price %}
         {% endfor %}
