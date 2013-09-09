@@ -1,6 +1,7 @@
 <?php
 
 use \Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 $app = require __DIR__ . '/bootstrap.php';
 
@@ -42,23 +43,27 @@ $app->get('/login', function(Request $request) use($app) {
 });
 
 $app->get('/', function(Request $request) use($app) {
-    $limit = $request->get('limit', 20);
-    $page = $request->get('page', 1);
+    $url = '/expenses?done=false&' . http_build_query($request->query->all());
 
-    $pager = $app['db']->getMapFor('\Model\Expense')
-        ->paginateFindWhere('payment_id IS NULL', [], null, $limit, $page);
-    return $app['twig']->render(
-        'index.html.twig',
-        compact('pager', 'limit')
+    return $app->handle(
+        Request::create($url, 'GET'),
+        HttpKernelInterface::SUB_REQUEST
     );
 });
 
 $app->get('/expenses', function(Request $request) use($app) {
-    $limit = $request->get('limit', 20);
     $page = $request->get('page', 1);
+    $done = $request->get('done', true);
+    $limit = $request->get('limit', 20);
 
+    if ($done === true) {
+        $where = '1 = 1';
+    }
+    else {
+        $where = 'payment_id IS NULL';
+    }
     $pager = $app['db']->getMapFor('\Model\Expense')
-        ->paginateFindWhere('1 = 1', [], null, $limit, $page);
+        ->paginateFindWhere($where, [], null, $limit, $page);
     return $app['twig']->render(
         'index.html.twig',
         compact('pager', 'limit')
