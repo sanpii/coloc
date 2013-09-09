@@ -62,8 +62,15 @@ $app->get('/expenses', function(Request $request) use($app) {
     else {
         $where = 'payment_id IS NULL';
     }
+
     $pager = $app['db']->getMapFor('\Model\Expense')
         ->paginateFindWhere($where, [], 'ORDER BY created DESC', $limit, $page);
+
+    $personMap = $app['db']->getMapFor('\Model\Person');
+    foreach ($pager->getCollection() as $expense) {
+        $expense->person = $personMap->findByPk(['id' => $expense->person_id]);
+    }
+
     return $app['twig']->render(
         'index.html.twig',
         compact('pager', 'limit')

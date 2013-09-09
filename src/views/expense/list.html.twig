@@ -14,7 +14,7 @@
             <tr>
                 <td>{{ expense.id }}</td>
                 <td>{{ expense.created | date('d/m/Y') }}</td>
-                <td>{{ expense.person_id }}</td>
+                <td>{{ expense.person.name }}</td>
                 <td>{{ expense.shop }}</td>
                 <td>{{ expense.price | number_format(2) }} €</td>
                 <td>{{ expense.description }}</td>
