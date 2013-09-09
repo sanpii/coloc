@@ -6,5 +6,6 @@
     </a>
     <hr />
 
-    {{ include('expense/list.html.twig', { 'expenses': expenses }) }}
+    {{ include('expense/list.html.twig', { 'expenses': pager.collection }) }}
+    {{ include('pager.html.twig', { 'pager': pager, 'limit': limit }) }}
 {% endblock %}

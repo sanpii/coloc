@@ -41,21 +41,27 @@ $app->get('/login', function(Request $request) use($app) {
     ));
 });
 
-$app->get('/', function() use($app) {
-    $expenses = $app['db']->getMapFor('\Model\Expense')
-        ->findWhere('payment_id IS NULL');
+$app->get('/', function(Request $request) use($app) {
+    $limit = $request->get('limit', 20);
+    $page = $request->get('page', 1);
+
+    $pager = $app['db']->getMapFor('\Model\Expense')
+        ->paginateFindWhere('payment_id IS NULL', [], null, $limit, $page);
     return $app['twig']->render(
         'index.html.twig',
-        compact('expenses')
+        compact('pager', 'limit')
     );
 });
 
-$app->get('/expenses', function() use($app) {
-    $expenses = $app['db']->getMapFor('\Model\Expense')
-        ->findAll();
+$app->get('/expenses', function(Request $request) use($app) {
+    $limit = $request->get('limit', 20);
+    $page = $request->get('page', 1);
+
+    $pager = $app['db']->getMapFor('\Model\Expense')
+        ->paginateFindWhere('1 = 1', [], null, $limit, $page);
     return $app['twig']->render(
         'index.html.twig',
-        compact('expenses')
+        compact('pager', 'limit')
     );
 });
 
