@@ -10,6 +10,7 @@
         </tr>
     </thead>
     <tbody>
+        {% set total = 0 %}
         {% for expense in expenses %}
             <tr>
                 <td>{{ expense.id }}</td>
@@ -19,6 +20,18 @@
                 <td>{{ expense.price | number_format(2) }} €</td>
                 <td>{{ expense.description }}</td>
             </tr>
+            {% set total = total + expense.price %}
         {% endfor %}
     </tbody>
+    <tfoot>
+        <tr>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td><strong class="pull-right">Total :</strong></td>
+            <td>{{ total | number_format(2) }} €</td>
+            <td> </td>
+            <td> </td>
+        </tr>
+    </tfoot>
 </table>
