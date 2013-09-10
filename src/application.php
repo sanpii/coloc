@@ -35,5 +35,6 @@ $app['security.firewalls'] = [
 
 $app->mount('/', new Controller\Index);
 $app->mount('/expenses', new Controller\Expenses);
+$app->mount('/payments', new Controller\Payment);
 
 return $app;
