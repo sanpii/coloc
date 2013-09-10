@@ -20,14 +20,15 @@ $app['config'] = require __DIR__ . '/config/current.php';
 
 $app['debug'] = $app['config']['debug'];
 
-$app->register(new TwigServiceProvider(), [
+$app->register(new TwigServiceProvider, [
     'twig.path' => __DIR__ . '/views',
 ]);
 
-$app->register(new SessionServiceProvider());
-$app->register(new SecurityServiceProvider());
+$app->register(new SessionServiceProvider);
+$app->register(new SecurityServiceProvider);
+$app->register(new ServiceControllerServiceProvider);
 
-$app->register(new PommServiceProvider(), [
+$app->register(new PommServiceProvider, [
     'pomm.class_path' => __DIR__ . '/vendor/pomm',
     'pomm.databases' => $app['config']['pomm'],
 ]);
@@ -37,8 +38,7 @@ $app['db'] = $app->share(function() use ($app) {
 });
 
 if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
-    $app->register(new UrlGeneratorServiceProvider());
-    $app->register(new ServiceControllerServiceProvider());
+    $app->register(new UrlGeneratorServiceProvider);
 
     $profiler = new WebProfilerServiceProvider();
     $app->register($profiler, [
