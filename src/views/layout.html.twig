@@ -12,14 +12,14 @@
                     <a class="navbar-brand" href="/">Coloc</a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li><a href="/expenses">Achats</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <ul class="nav navbar-nav navbar-left">
+                            <li><a href="/expenses">Achats</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
                             <li><a href="/logout">Déconnexion</a></li>
-                        {% endif %}
-                    </ul>
+                        </ul>
+                    {% endif %}
                 </div>
             </div>
 
@@ -30,6 +30,13 @@
                     {% endfor %}
                 </div>
             {% endfor %}
+
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <a href="/expenses/add" title="Nouveau payement">
+                    <span class="glyphicon glyphicon-plus-sign"></span>
+                </a>
+                <hr />
+            {% endif %}
 
             {% block content %}{% endblock %}
         </div>

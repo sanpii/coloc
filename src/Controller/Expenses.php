@@ -45,7 +45,7 @@ class Expenses implements ControllerProviderInterface
         }
 
         return $app['twig']->render(
-            'index.html.twig',
+            'expense/list.html.twig',
             compact('pager')
         );
     }
