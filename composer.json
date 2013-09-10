@@ -7,6 +7,7 @@
         "silex/silex": "*",
         "symfony/security": "*",
         "pomm/pomm-service-provider": "*@dev",
+        "pomm/pomm": "1.1.*@dev",
         "twig/twig": "*",
         "sanpi/twitter-bootstrap-installer": "*@dev"
     },
@@ -15,9 +16,6 @@
         "atoum/atoum": "*@dev",
         "sanpi/behatch-contexts": "*@dev",
         "behat/mink-goutte-driver": "*"
-    },
-    "suggest": {
-        "FortAwesome/Font-Awesome": "The iconic font designed for use with Twitter Bootstrap"
     },
     "scripts": {
         "post-install-cmd": "Sanpi\\TwitterBootstrap\\Composer\\ScriptHandler::postInstall",
