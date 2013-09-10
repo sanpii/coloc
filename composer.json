@@ -1,7 +1,4 @@
 {
-    "name": "sanpi/spore",
-    "description": "Quickly create your next awesome PHP project based on silex, pomm, bootstrap, atoum and behat",
-    "keywords": ["silex", "pomm", "bootstrap", "atoum", "behat", "skeleton"],
     "license": "MIT",
     "require": {
         "silex/silex": "*",
@@ -12,17 +9,11 @@
         "sanpi/twitter-bootstrap-installer": "*@dev"
     },
     "require-dev": {
-        "silex/web-profiler": "*",
-        "atoum/atoum": "*@dev",
-        "sanpi/behatch-contexts": "*@dev",
-        "behat/mink-goutte-driver": "*"
+        "silex/web-profiler": "*"
     },
     "scripts": {
         "post-install-cmd": "Sanpi\\TwitterBootstrap\\Composer\\ScriptHandler::postInstall",
         "post-update-cmd": "Sanpi\\TwitterBootstrap\\Composer\\ScriptHandler::postUpdate"
-    },
-    "config": {
-        "bin-dir": "bin"
     },
     "autoload": {
         "psr-0": { "": "src/" }
