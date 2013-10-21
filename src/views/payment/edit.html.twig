@@ -2,7 +2,13 @@
 
 {% block content %}
 
-    <form method="post" action="/payments/add" class="form-horizontal" role="form">
+    {% if payment.id > 0 %}
+        <form method="post" action="/payments/{{ payment.id }}/edit" class="form-horizontal" role="form">
+            <input type="hidden" name="payment[id]" value="{{ payment.id }}" />
+    {% else %}
+        <form method="post" action="/payments/add" class="form-horizontal" role="form">
+    {% endif %}
+
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
@@ -15,9 +21,16 @@
                 </tr>
             </thead>
             <tbody>
-                {% for expense in expenses %}
+                {% for expense in payment.expenses %}
                     <tr>
-                        <td><input type="checkbox" name="expenses[{{ expense.id }}]" /></td>
+                        <td>
+                            <input type="hidden" value="off" name="expenses[{{ expense.id }}]">
+                            <input type="checkbox" name="expenses[{{ expense.id }}]"
+                                {% if expense.payment_id == payment.id %}
+                                    checked="checked"
+                                {% endif %}
+                            />
+                        </td>
                         <td>{{ expense.created | date('d/m/Y') }}</td>
                         <td>{{ expense.person.name }}</td>
                         <td>{{ expense.shop }}</td>
