@@ -32,13 +32,6 @@
                 </div>
             {% endfor %}
 
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <a href="/expenses/add" title="Nouveau payement">
-                    <span class="glyphicon glyphicon-plus-sign"></span>
-                </a>
-                <hr />
-            {% endif %}
-
             {% block content %}{% endblock %}
         </div>
     </body>
