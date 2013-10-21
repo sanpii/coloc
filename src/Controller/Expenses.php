@@ -113,7 +113,7 @@ class Expenses implements ControllerProviderInterface
         $map->saveOne($expense);
 
         $app['session']->getFlashBag()
-            ->add('success', 'Paiement sauvegardé');
+            ->add('success', 'Dépense sauvegardée');
         return $app->redirect('/');
     }
 
@@ -126,7 +126,7 @@ class Expenses implements ControllerProviderInterface
             $map->deleteOne($expense);
 
             $app['session']->getFlashBag()
-                ->add('success', 'Paiement supprimé');
+                ->add('success', 'Dépenese supprimée');
         }
         else {
             $app->abort(404, "Dépense $id inconnue");
