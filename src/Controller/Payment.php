@@ -14,6 +14,7 @@ class Payment implements ControllerProviderInterface
         $controllers = $app['controllers_factory'];
 
         $controllers->get('/', [$this, 'getPayments']);
+        $controllers->get('/{id}/delete', [$this, 'deletePayment']);
 
         return $controllers;
     }
@@ -30,5 +31,36 @@ class Payment implements ControllerProviderInterface
             'payment/list.html.twig',
             compact('pager')
         );
+    }
+
+    public function deletePayment(Application $app, $id)
+    {
+        $map = $app['db']->getMapFor('\Model\Payment');
+
+        $payment = $map->findByPk(['id' => $id]);
+        if ($payment !== null) {
+            $this->unsetExpensePayement($app, $payment);
+
+            $map->deleteOne($payment);
+
+            $app['session']->getFlashBag()
+                ->add('success', 'Remboursement supprimé');
+        }
+        else {
+            $app->abort(404, "Remboursement $id inconnue");
+        }
+
+        return $app->redirect('/payments');
+    }
+
+    private function unsetExpensePayement(Application $app, $payment)
+    {
+        $map = $app['db']->getMapFor('\Model\Expense');
+
+        $sql = sprintf(
+            'UPDATE %s SET payment_id = null WHERE payment_id = %d',
+            $map->getTableName(), $payment->getId()
+        );
+        $map->query($sql);
     }
 }

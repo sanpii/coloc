@@ -7,6 +7,7 @@
                 <th>#</th>
                 <th>Date</th>
                 <th>Payé</th>
+                <th> </th>
             </tr>
         </thead>
         <tbody>
@@ -16,6 +17,10 @@
                     <td>{{ payment.created | date('d/m/Y') }}</td>
                     <td>
                         <span class="glyphicon glyphicon-{{ payment.done ? 'check' : 'unchecked' }}"></span>
+                    </td>
+                    <td>
+                        <a href="/payments/{{ payment.id }}/edit" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a onclick="return confirm('Êtes vous sûr ?');" href="/payments/{{ payment.id }}/delete" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
                     </td>
                 </tr>
             {% endfor %}
