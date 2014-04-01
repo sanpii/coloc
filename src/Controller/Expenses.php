@@ -40,9 +40,11 @@ class Expenses implements ControllerProviderInterface
             ->paginateFindWhere($where, [], 'ORDER BY created DESC', $limit, $page);
 
         $personMap = $app['db']->getMapFor('\Model\Person');
-        foreach ($pager->getCollection() as $expense) {
-            $expense->person = $personMap->findByPk(['id' => $expense->person_id]);
-        }
+        $pager->getCollection()->registerFilter(function($values) use($personMap) {
+            $values['person'] = $personMap
+                ->findByPk(['id' => $values['person_id']]);
+            return $values;
+        });
 
         return $app['twig']->render(
             'expense/list.html.twig',

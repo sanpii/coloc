@@ -56,7 +56,7 @@ class Payment implements ControllerProviderInterface
     public function editPayment(Application $app, $id)
     {
         $expenses = $app['db']->getMapFor('\Model\Expense')
-            ->findWhere('payment_id IS NULL OR payment_id = ?', [$id]);
+            ->findWhere('payment_id IS NULL OR payment_id = $*', [$id]);
 
         $map = $app['db']->getMapFor('\Model\Payment');
         if ($id > 0) {
@@ -76,9 +76,11 @@ class Payment implements ControllerProviderInterface
         $payment->expenses = $expenses;
 
         $personMap = $app['db']->getMapFor('\Model\Person');
-        foreach ($expenses as $expense) {
-            $expense->person = $personMap->findByPk(['id' => $expense->person_id]);
-        }
+        $expenses->registerFilter(function($values) use($personMap) {
+            $values['person'] = $personMap
+                ->findByPk(['id' => $values['person_id']]);
+            return $values;
+        });
 
         return $app['twig']->render(
             'payment/edit.html.twig',
