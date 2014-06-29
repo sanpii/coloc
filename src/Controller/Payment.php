@@ -102,7 +102,9 @@ class Payment implements ControllerProviderInterface
             $payment = $map->createObject();
         }
 
-        $payment->hydrate($request->request->get('payment'));
+        $data = $request->request->get('payment');
+        $data['done'] = ($data['done'] === 'on');
+        $payment->hydrate($data);
         $map->saveOne($payment);
 
         $map = $app['db']->getMapFor('\Model\Expense');

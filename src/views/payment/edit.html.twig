@@ -24,7 +24,7 @@
                 {% for expense in payment.expenses %}
                     <tr>
                         <td>
-                            <input type="hidden" value="off" name="expenses[{{ expense.id }}]">
+                            <input type="hidden" value="off" name="expenses[{{ expense.id }}]" />
                             <input type="checkbox" name="expenses[{{ expense.id }}]"
                                 {% if expense.payment_id == payment.id %}
                                     checked="checked"
@@ -40,6 +40,18 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <div class="checkbox">
+            <label>
+                <input type="hidden" value="off" name="payment[done]" />
+                <input type="checkbox" name="payment[done]"
+                    {% if payment.done %}
+                        checked="checked"
+                    {% endif %}
+                />
+                Payé
+            </label>
+        </div>
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Enregistrer</button>
