@@ -31,6 +31,13 @@ class Payment implements ControllerProviderInterface
         $pager = $app['db']->getMapFor('\Model\Payment')
             ->paginateFindWhere('1 = 1', compact('done'), 'ORDER BY created DESC', $limit, $page);
 
+        $pager->getCollection()
+            ->registerFilter(function($values) use($app) {
+                $values['amount'] = $this->getPaymentAmount($app, $values);
+
+                return $values;
+            });
+
         return $app['twig']->render(
             'payment/list.html.twig',
             compact('pager')
@@ -77,8 +84,8 @@ class Payment implements ControllerProviderInterface
 
         $personMap = $app['db']->getMapFor('\Model\Person');
         $expenses->registerFilter(function($values) use($personMap) {
-            $values['person'] = $personMap
-                ->findByPk(['id' => $values['person_id']]);
+            $values['person'] = $personMap->findByPk(['id' => $values['person_id']]);
+
             return $values;
         });
 
@@ -153,5 +160,33 @@ class Payment implements ControllerProviderInterface
             $map->getTableName(), $payment->id
         );
         $map->query($sql);
+    }
+
+    private function getPaymentAmount(Application $app, $payment)
+    {
+        $user = $this->getCurrentUser($app);
+
+        $amount = 0;
+        $expenses = $app['db']->getMapFor('\Model\Expense')
+            ->findWhere('payment_id = $*', [$payment['id']]);
+        foreach ($expenses as $expense) {
+            $price = $expense->getPrice();
+            if ($expense->getPersonId() !== $user->getId()) {
+                $price *= -1;
+            }
+
+            $amount += $price;
+        }
+
+        return $amount / 2;
+    }
+
+    private function getCurrentUser(Application $app)
+    {
+        $token = $app['security']->getToken();
+        $user = $token->getUser();
+        return $app['db']->getMapFor('\Model\Person')
+            ->findWhere('email = $*', [$user->getUsername()])
+            ->get(0);
     }
 }
