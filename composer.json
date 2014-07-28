@@ -2,7 +2,8 @@
     "license": "MIT",
     "require": {
         "silex/silex": "*",
-        "symfony/security": "*",
+        "symfony/security": "~2.5",
+        "symfony/twig-bridge": "~2.5",
         "pomm/pomm-service-provider": "*@dev",
         "twig/twig": "*",
         "sanpi/twitter-bootstrap-installer": "*@dev"
