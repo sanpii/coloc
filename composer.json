@@ -1,15 +1,15 @@
 {
     "license": "MIT",
     "require": {
-        "silex/silex": "*",
+        "silex/silex": "~1.2",
         "symfony/security": "~2.5",
         "symfony/twig-bridge": "~2.5",
         "pomm/pomm-service-provider": "*@dev",
-        "twig/twig": "*",
-        "sanpi/twitter-bootstrap-installer": "*@dev"
+        "twig/twig": "~1.16",
+        "sanpi/twitter-bootstrap-installer": "~1.2"
     },
     "require-dev": {
-        "silex/web-profiler": "*"
+        "silex/web-profiler": "~1.0"
     },
     "scripts": {
         "post-install-cmd": "Sanpi\\TwitterBootstrap\\Composer\\ScriptHandler::postInstall",
