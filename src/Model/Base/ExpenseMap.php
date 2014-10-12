@@ -20,6 +20,7 @@ abstract class ExpenseMap extends BaseObjectMap
         $this->addField('shop', 'varchar');
         $this->addField('description', 'varchar');
         $this->addField('payment_id', 'int4');
+        $this->addField('tr', 'int4');
 
         $this->pk_fields = array('id');
     }

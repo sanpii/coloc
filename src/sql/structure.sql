@@ -18,5 +18,6 @@ CREATE TABLE expense (
     created timestamp without time zone DEFAULT now() NOT NULL,
     shop character varying NOT NULL,
     description character varying,
+    tr INTEGER DEFAULT 0,
     payment_id INTEGER REFERENCES payment
 );
