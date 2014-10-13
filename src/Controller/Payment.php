@@ -169,13 +169,28 @@ class Payment implements ControllerProviderInterface
         $amount = 0;
         $expenses = $app['db']->getMapFor('\Model\Expense')
             ->findWhere('payment_id = $*', [$payment['id']]);
+
+        $trPersonId = (int)$app['db']->getMapFor('\Model\Config')
+            ->get('tr_person_id');
+        $trAmount = (double)$app['db']->getMapFor('\Model\Config')
+            ->get('tr_amount');
+        $trFreeAmount = (double)$app['db']->getMapFor('\Model\Config')
+            ->get('tr_free_amount');
+
         foreach ($expenses as $expense) {
-            $price = $expense->getPrice();
+            $tr = $expense->getTr();
+
+            $price = $expense->getPrice() - $tr * $trAmount;
             if ($expense->getPersonId() !== $user->getId()) {
                 $price *= -1;
             }
 
-            $amount += $price;
+            $trPrice = $tr * ($trAmount - $trFreeAmount);
+            if ($trPersonId !== $user->getId()) {
+                $trPrice *= -1;
+            }
+
+            $amount += $price + $trPrice;
         }
 
         return $amount / 2;

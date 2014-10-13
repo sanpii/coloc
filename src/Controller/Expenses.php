@@ -86,6 +86,7 @@ class Expenses implements ControllerProviderInterface
                 'person_id' => -1,
                 'description' => '',
                 'created' => 'now',
+                'tr' => 0,
             ]);
         }
 
