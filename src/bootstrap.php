@@ -1,12 +1,12 @@
 <?php
 
-use \Pomm\Silex\PommServiceProvider;
 use \Silex\Provider\TwigServiceProvider;
 use \Silex\Provider\SessionServiceProvider;
 use \Silex\Provider\SecurityServiceProvider;
 use \Silex\Provider\WebProfilerServiceProvider;
 use \Silex\Provider\UrlGeneratorServiceProvider;
 use \Silex\Provider\ServiceControllerServiceProvider;
+use \PommProject\Silex\ServiceProvider\PommServiceProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -14,9 +14,14 @@ if (!is_file(__DIR__ . '/config/current.php')) {
     throw new \RunTimeException('No current configuration file found in config.');
 }
 
-$app = new Silex\Application();
+$app = new \Silex\Application();
 
-$app['config'] = require __DIR__ . '/config/current.php';
+$app['config'] = $app->share(function () use($app) {
+    $config = require __DIR__ . '/config/current.php';
+    $config['pomm.configuration']['spore']['class:session_builder'] = '\PommProject\ModelManager\SessionBuilder';
+
+    return $config;
+});
 
 $app['debug'] = $app['config']['debug'];
 
@@ -28,13 +33,10 @@ $app->register(new SessionServiceProvider);
 $app->register(new SecurityServiceProvider);
 $app->register(new ServiceControllerServiceProvider);
 
-$app->register(new PommServiceProvider, [
-    'pomm.class_path' => __DIR__ . '/vendor/pomm',
-    'pomm.databases' => $app['config']['pomm'],
-]);
+$app->register(new PommServiceProvider, $app['config']);
 
 $app['db'] = $app->share(function() use ($app) {
-    return $app['pomm']->createConnection();
+    return $app['pomm']['spore'];
 });
 
 if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
