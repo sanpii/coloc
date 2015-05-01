@@ -63,7 +63,7 @@ class Payment implements ControllerProviderInterface
     public function editPayment(Application $app, $id)
     {
         $expenses = $app['db']->getMapFor('\Model\Expense')
-            ->findWhere('payment_id IS NULL OR payment_id = $*', [$id]);
+            ->findWhere('payment_id IS NULL OR payment_id = $*', [$id], 'ORDER BY created');
 
         $map = $app['db']->getMapFor('\Model\Payment');
         if ($id > 0) {
