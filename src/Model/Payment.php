@@ -2,9 +2,16 @@
 
 namespace Model;
 
-use \Pomm\Object\BaseObject;
-use \Pomm\Exception\Exception;
+use PommProject\ModelManager\Model\FlexibleEntity;
 
-class Payment extends BaseObject
+/**
+ * Payment
+ *
+ * Flexible entity for relation
+ * public.payment
+ *
+ * @see FlexibleEntity
+ */
+class Payment extends FlexibleEntity
 {
 }
