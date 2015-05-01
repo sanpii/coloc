@@ -22,7 +22,7 @@
         </thead>
         <tbody>
             {% set total = 0 %}
-            {% for expense in pager.collection %}
+            {% for expense in pager.iterator %}
                 <tr>
                     <td>{{ expense.id }}</td>
                     <td>{{ expense.created | date('d/m/Y') }}</td>

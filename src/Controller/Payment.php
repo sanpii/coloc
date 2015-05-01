@@ -3,6 +3,7 @@
 namespace Controller;
 
 use \Silex\Application;
+use \PommProject\Foundation\Where;
 use \Silex\ControllerProviderInterface;
 use \Symfony\Component\HttpFoundation\Request;
 use \Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -28,15 +29,19 @@ class Payment implements ControllerProviderInterface
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 20);
 
-        $pager = $app['db']->getMapFor('\Model\Payment')
-            ->paginateFindWhere('1 = 1', compact('done'), 'ORDER BY created DESC', $limit, $page);
+        $pager = $app['db']->getModel('\Model\PaymentModel')
+            ->paginateFindWhere(
+                new Where('1 = 1'),
+                $limit,
+                $page,
+                'ORDER BY created DESC'
+            );
 
-        $pager->getCollection()
-            ->registerFilter(function($values) use($app) {
-                $values['amount'] = $this->getPaymentAmount($app, $values);
+        $pager->getIterator()->registerFilter(function ($values) use($app) {
+            $values['amount'] = $this->getPaymentAmount($app, $values);
 
-                return $values;
-            });
+            return $values;
+        });
 
         return $app['twig']->render(
             'payment/list.html.twig',
@@ -62,10 +67,10 @@ class Payment implements ControllerProviderInterface
 
     public function editPayment(Application $app, $id)
     {
-        $expenses = $app['db']->getMapFor('\Model\Expense')
+        $expenses = $app['db']->getModel('\Model\ExpenseModel')
             ->findWhere('payment_id IS NULL OR payment_id = $*', [$id], 'ORDER BY created');
 
-        $map = $app['db']->getMapFor('\Model\Payment');
+        $map = $app['db']->getModel('\Model\PaymentModel');
         if ($id > 0) {
             $payment = $map->findByPk(['id' => $id]);
             if (is_null($payment)) {
@@ -73,7 +78,7 @@ class Payment implements ControllerProviderInterface
             }
         }
         else {
-            $payment = $map->createObject([
+            $payment = $map->createEntity([
                 'id' => $id,
                 'done' => false,
                 'created' => 'now',
@@ -82,11 +87,12 @@ class Payment implements ControllerProviderInterface
 
         $payment->expenses = $expenses;
 
-        $personMap = $app['db']->getMapFor('\Model\Person');
-        $expenses->registerFilter(function($values) use($personMap) {
-            $values['person'] = $personMap->findByPk(['id' => $values['person_id']]);
+        $personMap = $app['db']->getModel('\Model\PersonModel');
+        $expenses->registerFilter(function ($expense) use($personMap) {
+            $expense->person = $personMap
+                ->findByPk(['id' => $expense['person_id']]);
 
-            return $values;
+            return $expense;
         });
 
         return $app['twig']->render(
@@ -97,33 +103,34 @@ class Payment implements ControllerProviderInterface
 
     public function savePayment(Application $app, Request $request, $id)
     {
-        $map = $app['db']->getMapFor('\Model\Payment');
+        $map = $app['db']->getModel('\Model\PaymentModel');
+        $data = $request->request->get('payment');
+        $data['done'] = ($data['done'] === 'on');
 
         if ($id > 0) {
-            $payment = $map->findByPk(['id' => $id]);
+            $pk = compact('id');
+            $payment = $map->findByPk($pk);
             if (is_null($payment)) {
                 $app->abort(404, "Remboursement #$id inconnu");
             }
+            $map->updateByPk($pk, $data);
         }
         else {
-            $payment = $map->createObject();
+            $payment = $map->createAndSave($data);
         }
 
-        $data = $request->request->get('payment');
-        $data['done'] = ($data['done'] === 'on');
-        $payment->hydrate($data);
-        $map->saveOne($payment);
-
-        $map = $app['db']->getMapFor('\Model\Expense');
+        $map = $app['db']->getModel('\Model\ExpenseModel');
         foreach ($request->request->get('expenses') as $id => $include) {
-            $expense = $map->findByPk(['id' => $id]);
+            $pk = compact('id');
+
+            $expense = $map->findByPk($pk);
             if ($include === 'on') {
-                $expense->payment_id = $payment->id;
+                $payment_id = $payment->id;
             }
             else {
-                $expense->payment_id = null;
+                $payment_id = null;
             }
-            $map->saveOne($expense);
+            $map->updateByPk($pk, compact('payment_id'));
         }
 
         $app['session']->getFlashBag()
@@ -133,7 +140,7 @@ class Payment implements ControllerProviderInterface
 
     public function deletePayment(Application $app, $id)
     {
-        $map = $app['db']->getMapFor('\Model\Payment');
+        $map = $app['db']->getModel('\Model\PaymentModel');
 
         $payment = $map->findByPk(['id' => $id]);
         if ($payment !== null) {
@@ -153,13 +160,15 @@ class Payment implements ControllerProviderInterface
 
     private function unsetExpensePayement(Application $app, $payment)
     {
-        $map = $app['db']->getMapFor('\Model\Expense');
+        $map = $app['db']->getModel('\Model\ExpenseModel');
 
         $sql = sprintf(
             'UPDATE %s SET payment_id = null WHERE payment_id = %d',
-            $map->getTableName(), $payment->id
+            $map->getStructure()->getRelation(), $payment->id
         );
-        $map->query($sql);
+
+        $app['db']->getClientUsingPooler('prepared_query', $sql)
+            ->execute();
     }
 
     private function getPaymentAmount(Application $app, $payment)
@@ -167,14 +176,14 @@ class Payment implements ControllerProviderInterface
         $user = $this->getCurrentUser($app);
 
         $amount = 0;
-        $expenses = $app['db']->getMapFor('\Model\Expense')
+        $expenses = $app['db']->getModel('\Model\ExpenseModel')
             ->findWhere('payment_id = $*', [$payment['id']]);
 
-        $trPersonId = (int)$app['db']->getMapFor('\Model\Config')
+        $trPersonId = (int)$app['db']->getModel('\Model\ConfigModel')
             ->get('tr_person_id');
-        $trAmount = (double)$app['db']->getMapFor('\Model\Config')
+        $trAmount = (double)$app['db']->getModel('\Model\ConfigModel')
             ->get('tr_amount');
-        $trFreeAmount = (double)$app['db']->getMapFor('\Model\Config')
+        $trFreeAmount = (double)$app['db']->getModel('\Model\ConfigModel')
             ->get('tr_free_amount');
 
         foreach ($expenses as $expense) {
@@ -200,7 +209,7 @@ class Payment implements ControllerProviderInterface
     {
         $token = $app['security']->getToken();
         $user = $token->getUser();
-        return $app['db']->getMapFor('\Model\Person')
+        return $app['db']->getModel('\Model\PersonModel')
             ->findWhere('email = $*', [$user->getUsername()])
             ->get(0);
     }

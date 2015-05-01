@@ -5,7 +5,7 @@ $app = require __DIR__ . '/bootstrap.php';
 $app['users'] = $app->share(function() use ($app) {
     $users = [];
 
-    $persons = $app['db']->getMapFor('\Model\Person')
+    $persons = $app['db']->getModel('\Model\PersonModel')
         ->findAll();
     foreach ($persons as $person) {
         $users[$person->email] = [
