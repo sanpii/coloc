@@ -2,8 +2,8 @@
 
 {% block content %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <a href="/expenses/add" title="Nouvelle dépense">
-            <span class="glyphicon glyphicon-plus-sign"></span>
+        <a href="/expenses/add" title="Nouvelle dépense" class="btn btn-primary">
+            <span class="glyphicon glyphicon-plus-sign"></span> Ajouter
         </a>
         <hr />
     {% endif %}
@@ -15,7 +15,7 @@
                 <th>Date</th>
                 <th>Payeur</th>
                 <th>Magasin</th>
-                <th>Price</th>
+                <th>Prix</th>
                 <th>Description</th>
                 <th> </th>
             </tr>

@@ -2,8 +2,8 @@
 
 {% block content %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <a href="/payments/add" title="Nouveau remboursement">
-            <span class="glyphicon glyphicon-plus-sign"></span>
+        <a href="/payments/add" title="Nouveau remboursement" class="btn btn-primary">
+            <span class="glyphicon glyphicon-plus-sign"></span> Ajouter
         </a>
         <hr />
     {% endif %}
