@@ -1,12 +1,7 @@
 <?php
 
+use \Silex\Provider;
 use \Pomm\Silex\PommServiceProvider;
-use \Silex\Provider\TwigServiceProvider;
-use \Silex\Provider\SessionServiceProvider;
-use \Silex\Provider\SecurityServiceProvider;
-use \Silex\Provider\WebProfilerServiceProvider;
-use \Silex\Provider\UrlGeneratorServiceProvider;
-use \Silex\Provider\ServiceControllerServiceProvider;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -20,13 +15,13 @@ $app['config'] = require __DIR__ . '/config/current.php';
 
 $app['debug'] = $app['config']['debug'];
 
-$app->register(new TwigServiceProvider, [
+$app->register(new Provider\TwigServiceProvider, [
     'twig.path' => __DIR__ . '/views',
 ]);
 
-$app->register(new SessionServiceProvider);
-$app->register(new SecurityServiceProvider);
-$app->register(new ServiceControllerServiceProvider);
+$app->register(new Provider\SessionServiceProvider);
+$app->register(new Provider\SecurityServiceProvider);
+$app->register(new Provider\ServiceControllerServiceProvider);
 
 $app->register(new PommServiceProvider, [
     'pomm.class_path' => __DIR__ . '/vendor/pomm',
@@ -38,9 +33,11 @@ $app['db'] = $app->share(function() use ($app) {
 });
 
 if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
-    $app->register(new UrlGeneratorServiceProvider);
 
-    $profiler = new WebProfilerServiceProvider();
+    $app->register(new Provider\HttpFragmentServiceProvider);
+    $app->register(new Provider\UrlGeneratorServiceProvider);
+
+    $profiler = new Provider\WebProfilerServiceProvider();
     $app->register($profiler, [
         'profiler.cache_dir' => __DIR__ . '/../cache/profiler',
     ]);
