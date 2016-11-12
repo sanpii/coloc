@@ -6,6 +6,7 @@ use \Silex\Application;
 use \Silex\ControllerProviderInterface;
 use \Symfony\Component\HttpFoundation\Request;
 use \Symfony\Component\HttpKernel\HttpKernelInterface;
+use \PommProject\Foundation\Where;
 
 class Expenses implements ControllerProviderInterface
 {
@@ -36,11 +37,11 @@ class Expenses implements ControllerProviderInterface
             $where = 'payment_id IS NULL';
         }
 
-        $pager = $app['db']->getMapFor('\Model\Expense')
-            ->paginateFindWhere($where, [], 'ORDER BY created DESC', $limit, $page);
+        $pager = $app['db']->getModel('\Model\ExpenseModel')
+            ->paginateFindWhere(new Where($where), $limit, $page, 'ORDER BY created DESC');
 
-        $personMap = $app['db']->getMapFor('\Model\Person');
-        $pager->getCollection()->registerFilter(function($values) use($personMap) {
+        $personMap = $app['db']->getModel('\Model\PersonModel');
+        $pager->getIterator()->registerFilter(function($values) use($personMap) {
             $values['person'] = $personMap
                 ->findByPk(['id' => $values['person_id']]);
             return $values;
@@ -70,7 +71,7 @@ class Expenses implements ControllerProviderInterface
 
     public function editExpense(Application $app, $id)
     {
-        $map = $app['db']->getMapFor('\Model\Expense');
+        $map = $app['db']->getModel('\Model\ExpenseModel');
 
         if ($id > 0) {
             $expense = $map->findByPk(['id' => $id]);
@@ -79,7 +80,7 @@ class Expenses implements ControllerProviderInterface
             }
         }
         else {
-            $expense = $map->createObject([
+            $expense = $map->createAndSave([
                 'id' => $id,
                 'price' => 0,
                 'shop' => '',
@@ -90,7 +91,7 @@ class Expenses implements ControllerProviderInterface
             ]);
         }
 
-        $persons = $app['db']->getMapFor('\Model\Person')
+        $persons = $app['db']->getModel('\Model\PersonModel')
             ->findAll();
 
         return $app['twig']->render(
@@ -101,20 +102,21 @@ class Expenses implements ControllerProviderInterface
 
     public function saveExpense(Application $app, Request $request, $id)
     {
-        $map = $app['db']->getMapFor('\Model\Expense');
+        $map = $app['db']->getModel('\Model\ExpenseModel');
+        $data = $request->request->get('expense');
 
         if ($id > 0) {
-            $expense = $map->findByPk(['id' => $id]);
+            $pk = ['id' => $id];
+            $expense = $map->findByPk($pk);
             if (is_null($expense)) {
                 $app->abort(404, "Dépense #$id inconnue");
             }
+            $map->updateByPk($pk, $data);
+
         }
         else {
-            $expense = $map->createObject();
+            $expense = $map->createAndSave($data);
         }
-
-        $expense->hydrate($request->request->get('expense'));
-        $map->saveOne($expense);
 
         $app['session']->getFlashBag()
             ->add('success', 'Dépense sauvegardée');
@@ -123,11 +125,12 @@ class Expenses implements ControllerProviderInterface
 
     public function deleteExpense(Application $app, $id)
     {
-        $map = $app['db']->getMapFor('\Model\Expense');
+        $map = $app['db']->getModel('\Model\ExpenseModel');
+        $pk = ['id' => $id];
 
-        $expense = $map->findByPk(['id' => $id]);
+        $expense = $map->findByPk($pk);
         if ($expense !== null) {
-            $map->deleteOne($expense);
+            $map->deleteByPk($pk);
 
             $app['session']->getFlashBag()
                 ->add('success', 'Dépenese supprimée');

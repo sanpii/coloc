@@ -1,7 +1,11 @@
 <?php
+declare(strict_types = 1);
 
 use \Silex\Provider;
-use \Pomm\Silex\PommServiceProvider;
+use \PommProject\Silex\ {
+    ServiceProvider\PommServiceProvider,
+    ProfilerServiceProvider\PommProfilerServiceProvider
+};
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -11,7 +15,12 @@ if (!is_file(__DIR__ . '/config/current.php')) {
 
 $app = new Silex\Application();
 
-$app['config'] = require __DIR__ . '/config/current.php';
+$app['config'] = function () use($app) {
+    $config = require __DIR__ . '/config/current.php';
+    $config['pomm']['spore']['class:session_builder'] = '\PommProject\ModelManager\SessionBuilder';
+
+    return $config;
+};
 
 $app['debug'] = $app['config']['debug'];
 
@@ -24,16 +33,14 @@ $app->register(new Provider\SecurityServiceProvider);
 $app->register(new Provider\ServiceControllerServiceProvider);
 
 $app->register(new PommServiceProvider, [
-    'pomm.class_path' => __DIR__ . '/vendor/pomm',
-    'pomm.databases' => $app['config']['pomm'],
+    'pomm.configuration' => $app['config']['pomm'],
 ]);
 
-$app['db'] = $app->share(function() use ($app) {
-    return $app['pomm']->createConnection();
-});
+$app['db'] = function ($app) {
+    return $app['pomm']['spore'];
+};
 
 if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
-
     $app->register(new Provider\HttpFragmentServiceProvider);
     $app->register(new Provider\UrlGeneratorServiceProvider);
 
@@ -42,6 +49,8 @@ if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
         'profiler.cache_dir' => __DIR__ . '/../cache/profiler',
     ]);
     $app->mount('/_profiler', $profiler);
+
+    $app->register(new PommProfilerServiceProvider);
 }
 
 return $app;

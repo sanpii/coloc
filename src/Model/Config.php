@@ -2,9 +2,16 @@
 
 namespace Model;
 
-use \Pomm\Object\BaseObject;
-use \Pomm\Exception\Exception;
+use PommProject\ModelManager\Model\FlexibleEntity;
 
-class Config extends BaseObject
+/**
+ * Config
+ *
+ * Flexible entity for relation
+ * public.config
+ *
+ * @see FlexibleEntity
+ */
+class Config extends FlexibleEntity
 {
 }
