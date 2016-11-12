@@ -6,16 +6,11 @@
         "pomm-project/pomm-service-provider": "dev-silex-2",
         "pomm-project/pomm-symfony-bridge": "dev-master",
         "pomm-project/model-manager": "~2.0",
-        "twig/twig": "~1.16",
-        "sanpi/twitter-bootstrap-installer": "~1.2"
+        "twig/twig": "~1.16"
     },
     "require-dev": {
         "pomm-project/pomm-profiler-service-provider": "dev-silex-2",
         "pomm-project/cli": "~2.0"
-    },
-    "scripts": {
-        "post-install-cmd": "Sanpi\\TwitterBootstrap\\Composer\\ScriptHandler::postInstall",
-        "post-update-cmd": "Sanpi\\TwitterBootstrap\\Composer\\ScriptHandler::postUpdate"
     },
     "autoload": {
         "psr-0": { "": "src/" }
