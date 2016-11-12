@@ -22,7 +22,9 @@ $app['config'] = function () use($app) {
     return $config;
 };
 
-$app['debug'] = $app['config']['debug'];
+$app['debug'] = function () {
+    return getenv('APP_DEBUG') !== 0 && getenv('APP_ENVIRONMENT') !== 'prod';
+};
 
 $app->register(new Provider\TwigServiceProvider, [
     'twig.path' => __DIR__ . '/views',
@@ -42,13 +44,11 @@ $app['db'] = function ($app) {
 
 if (class_exists('\Silex\Provider\WebProfilerServiceProvider')) {
     $app->register(new Provider\HttpFragmentServiceProvider);
-    $app->register(new Provider\UrlGeneratorServiceProvider);
 
-    $profiler = new Provider\WebProfilerServiceProvider();
-    $app->register($profiler, [
+    $app->register(new Provider\WebProfilerServiceProvider, [
         'profiler.cache_dir' => __DIR__ . '/../cache/profiler',
+        'profiler.mount_prefix' => '/_profiler',
     ]);
-    $app->mount('/_profiler', $profiler);
 
     $app->register(new PommProfilerServiceProvider);
 }

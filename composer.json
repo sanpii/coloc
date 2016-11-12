@@ -1,18 +1,16 @@
 {
     "license": "MIT",
     "require": {
-        "silex/silex": "~1.2",
-        "symfony/security": "~2.5",
-        "symfony/twig-bridge": "~2.5",
-        "pomm-project/pomm-service-provider": "dev-silex-1",
+        "silex/silex": "~2.0",
+        "symfony/security": "~3.0",
+        "pomm-project/pomm-service-provider": "dev-silex-2",
         "pomm-project/pomm-symfony-bridge": "dev-master",
         "pomm-project/model-manager": "~2.0",
         "twig/twig": "~1.16",
         "sanpi/twitter-bootstrap-installer": "~1.2"
     },
     "require-dev": {
-        "silex/web-profiler": "~1.0"
-        "pomm-project/pomm-profiler-service-provider": "dev-silex-1",
+        "pomm-project/pomm-profiler-service-provider": "dev-silex-2",
         "pomm-project/cli": "~2.0"
     },
     "scripts": {
@@ -21,6 +19,9 @@
     },
     "autoload": {
         "psr-0": { "": "src/" }
+    },
+    "config": {
+        "bin-dir": "bin/"
     },
     "extra": {
         "symfony-web-dir": "web"

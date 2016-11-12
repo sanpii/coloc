@@ -1,8 +1,9 @@
 <?php
+declare(strict_types = 1);
 
 $app = require __DIR__ . '/bootstrap.php';
 
-$app['users'] = $app->share(function() use ($app) {
+$app['users'] = function() use ($app) {
     $users = [];
 
     $persons = $app['db']->getModel('\Model\PersonModel')
@@ -14,7 +15,7 @@ $app['users'] = $app->share(function() use ($app) {
         ];
     }
     return $users;
-});
+};
 
 $app['security.firewalls'] = [
     'dev' => [
