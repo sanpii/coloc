@@ -80,7 +80,7 @@ class Expenses implements ControllerProviderInterface
             }
         }
         else {
-            $expense = $map->createAndSave([
+            $expense = $map->createEntity([
                 'id' => $id,
                 'price' => 0,
                 'shop' => '',

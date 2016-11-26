@@ -74,7 +74,8 @@ class Payment implements ControllerProviderInterface
             }
         }
         else {
-            $payment = $map->createAndSave([
+            $payment = $map->createEntity([
+                'id' => $id,
                 'done' => false,
                 'created' => 'now',
             ]);
