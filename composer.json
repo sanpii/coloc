@@ -7,7 +7,7 @@
         "pomm-project/pomm-symfony-bridge": "dev-master",
         "pomm-project/model-manager": "~2.0",
         "symfony/twig-bridge": "~3.0",
-        "twig/twig": "~1.16"
+        "twig/twig": "~2.4"
     },
     "require-dev": {
         "pomm-project/pomm-profiler-service-provider": "dev-silex-2",
