@@ -1,5 +1,5 @@
 {
-    "name": "sanpi/spore",
+    "name": "coloc",
     "dependencies": {
         "bootstrap": "v4.0.0-beta",
         "Font-Awesome": "~4.7"
