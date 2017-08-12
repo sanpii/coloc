@@ -3,6 +3,11 @@ body {
   padding-bottom: 40px;
 }
 
+.alert {
+    margin-top: 1rem;
+    margin-bottom: 0;
+}
+
 /* Custom container */
 .container-narrow {
   margin: 0 auto;

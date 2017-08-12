@@ -2,10 +2,11 @@
 
 {% block content %}
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        <a href="/payments/add" title="Nouveau remboursement" class="btn btn-primary">
-            <span class="glyphicon glyphicon-plus-sign"></span> Ajouter
-        </a>
-        <hr />
+        <div class="btn-toolbar p-3" role="toolbar">
+            <a href="/payments/add" title="Nouveau remboursement" class="btn btn-primary">
+                <span class="fa fa-plus-circle"></span> Ajouter
+            </a>
+        </div>
     {% endif %}
 
     <table class="table table-striped table-hover">
@@ -25,11 +26,11 @@
                     <td>{{ payment.created | date('d/m/Y') }}</td>
                     <td>{{ payment.amount | number_format(2) }}</td>
                     <td>
-                        <span class="glyphicon glyphicon-{{ payment.done ? 'check' : 'unchecked' }}"></span>
+                        <span class="fa fa-{{ payment.done ? 'check-square-o' : 'square-o' }}"></span>
                     </td>
                     <td>
-                        <a href="/payments/{{ payment.id }}/edit" class="btn btn-primary"><span class="glyphicon glyphicon-edit"></span></a>
-                        <a onclick="return confirm('Êtes vous sûr ?');" href="/payments/{{ payment.id }}/delete" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>
+                        <a href="/payments/{{ payment.id }}/edit" class="btn btn-primary"><span class="fa fa-edit"></span></a>
+                        <a onclick="return confirm('Êtes vous sûr ?');" href="/payments/{{ payment.id }}/delete" class="btn btn-danger"><span class="fa fa-trash"></span></a>
                     </td>
                 </tr>
             {% endfor %}
