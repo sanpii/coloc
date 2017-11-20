@@ -4,9 +4,9 @@
 /cache/
 /composer.lock
 /composer.phar
+/public/lib/
 /symfony.lock
 /vendor/
-/web/lib/
 
 ###> symfony/framework-bundle ###
 .env

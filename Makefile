@@ -22,12 +22,12 @@ vendor: composer.lock
 composer.lock: composer.json
 	composer install $(COMPOSER_FLAGS)
 
-assets: web/lib
+assets: public/lib
 
-web/lib: bower.json
+public/lib: bower.json
 	bower install $(BOWER_FLAGS)
 
 distclean:
-	rm -rf vendor composer.lock web/lib
+	rm -rf vendor composer.lock public/lib
 
 .PHONY: all assets distclean
