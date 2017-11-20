@@ -1,25 +1,33 @@
 {
     "license": "MIT",
     "require": {
-        "silex/silex": "~2.0",
-        "symfony/security": "~3.0",
-        "pomm-project/pomm-service-provider": "dev-silex-2",
-        "pomm-project/pomm-symfony-bridge": "dev-master",
-        "pomm-project/model-manager": "~2.0",
-        "symfony/twig-bridge": "~3.0",
-        "twig/twig": "~2.4"
+        "php": ">=7.1",
+        "pomm-project/pomm-bundle": "~2.3",
+        "symfony/asset": "~3.3",
+        "symfony/assetic-bundle": "~2.8",
+        "symfony/framework-bundle": "~3.3",
+        "symfony/config": "~3.3",
+        "symfony/flex": "~1.0",
+        "symfony/http-kernel": "~3.3",
+        "symfony/security-bundle": "~3.0",
+        "symfony/templating": "~3.3",
+        "symfony/twig-bundle": "~3.3"
     },
     "require-dev": {
-        "pomm-project/pomm-profiler-service-provider": "dev-silex-2",
-        "pomm-project/cli": "~2.0"
+        "symfony/debug-bundle": "~3.3",
+        "symfony/dotenv": "~3.3",
+        "symfony/web-profiler-bundle": "~3.3"
     },
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-4": { "App\\": "src/" }
     },
     "config": {
         "bin-dir": "bin/"
     },
     "extra": {
-        "symfony-web-dir": "web"
+        "symfony-web-dir": "web",
+        "symfony": {
+            "allow-contrib": "true"
+        }
     }
 }
