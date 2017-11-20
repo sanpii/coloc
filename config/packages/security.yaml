@@ -1,0 +1,21 @@
+security:
+    providers:
+        pomm:
+          id: app.security.provider
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            anonymous: ~
+            form_login: ~
+            logout: ~
+
+    encoders:
+        App\Security\User: bcrypt
+
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_USER }

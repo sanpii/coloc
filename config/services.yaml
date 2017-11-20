@@ -1,0 +1,24 @@
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+    app.controller.index:
+        class: App\Controller\Index
+        arguments: ['@templating', '@pomm']
+
+    app.controller.expenses:
+        class: App\Controller\Expenses
+        arguments: ['@templating', '@pomm']
+
+    app.controller.payments:
+        class: App\Controller\Payments
+        arguments: ['@templating', '@pomm']
+
+    app.security.provider:
+        class: App\Security\Provider
+        arguments: ['@pomm']
+
+framework:
+    templating:
+        engines: ['twig']

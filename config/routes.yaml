@@ -1,0 +1,79 @@
+index:
+    path: /
+    defaults: { _controller: app.controller.index:index }
+    methods: [GET]
+
+login:
+    path: /login
+    defaults: { _controller: app.controller.index:login }
+    methods: [GET]
+
+login_check:
+    path: /login_check
+    defaults: { _controller: app.controller.index:loginCheck }
+    methods: [POST]
+
+logout:
+    path: /logout
+    defaults: { _controller: app.controller.index:logout }
+    methods: [GET]
+
+expenses_index:
+    path: /expenses
+    defaults: { _controller: app.controller.expenses:listExpenses }
+    methods: [GET]
+
+expenses_add:
+    path: /expenses/add
+    defaults: { _controller: app.controller.expenses:addExpense }
+    methods: [GET]
+
+expenses_create:
+    path: /expenses/add
+    defaults: { _controller: app.controller.expenses:createExpense }
+    methods: [POST]
+
+expenses_edit:
+    path: /expenses/{id}/edit
+    defaults: { _controller: app.controller.expenses:editExpense }
+    methods: [GET]
+
+expenses_save:
+    path: /expenses/{id}/edit
+    defaults: { _controller: app.controller.expenses:saveExpense }
+    methods: [POST]
+
+expenses_delete:
+    path: /expenses/{id}/delete
+    defaults: { _controller: app.controller.expenses:deleteExpense }
+    methods: [GET]
+
+payments_index:
+    path: /payments
+    defaults: { _controller: app.controller.payments:listPayments }
+    methods: [GET]
+
+payments_add:
+    path: /payments/add
+    defaults: { _controller: app.controller.payments:addExpense }
+    methods: [GET]
+
+payments_create:
+    path: /payments/add
+    defaults: { _controller: app.controller.payments:createExpense }
+    methods: [POST]
+
+payments_edit:
+    path: /payments/{id}/edit
+    defaults: { _controller: app.controller.payments:editExpense }
+    methods: [GET]
+
+payments_save:
+    path: /payments/{id}/edit
+    defaults: { _controller: app.controller.payments:saveExpense }
+    methods: [POST]
+
+payments_delete:
+    path: /payments/{id}/delete
+    defaults: { _controller: app.controller.payments:deleteExpense }
+    methods: [GET]

@@ -1,30 +1,31 @@
 <?php
+declare(strict_types = 1);
 
-namespace Controller;
+namespace App\Controller;
 
-use \Silex\Application;
-use \Silex\Api\ControllerProviderInterface;
-use \Symfony\Component\HttpFoundation\Request;
-use \Symfony\Component\HttpKernel\HttpKernelInterface;
+use \PommProject\Foundation\Pomm;
 use \PommProject\Foundation\Where;
+use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use \Symfony\Component\HttpFoundation\Request;
+use \Symfony\Component\HttpFoundation\Response;
+use \Symfony\Component\HttpKernel\HttpKernelInterface;
+use \Symfony\Component\Templating\EngineInterface;
 
-class Expenses implements ControllerProviderInterface
+class Expenses implements ContainerAwareInterface
 {
-    public function connect(Application $app)
+    use \Symfony\Bundle\FrameworkBundle\Controller\ControllerTrait;
+    use \Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+    private $pomm;
+    private $templating;
+
+    public function __construct(EngineInterface $templating, Pomm $pomm)
     {
-        $controllers = $app['controllers_factory'];
-
-        $controllers->get('/', [$this, 'getExpenses']);
-        $controllers->get('/add', [$this, 'addExpense']);
-        $controllers->post('/add', [$this, 'createExpense']);
-        $controllers->get('/{id}/edit', [$this, 'editExpense']);
-        $controllers->post('/{id}/edit', [$this, 'saveExpense']);
-        $controllers->get('/{id}/delete', [$this, 'deleteExpense']);
-
-        return $controllers;
+        $this->templating = $templating;
+        $this->pomm = $pomm;
     }
 
-    public function getExpenses(Application $app, Request $request)
+    public function listExpenses(Request $request): Response
     {
         $page = $request->get('page', 1);
         $done = $request->get('done', true);
@@ -37,46 +38,46 @@ class Expenses implements ControllerProviderInterface
             $where = 'payment_id IS NULL';
         }
 
-        $pager = $app['db']->getModel('\Model\ExpenseModel')
+        $pager = $this->pomm['db']->getModel('\App\Model\ExpenseModel')
             ->paginateFindWhere(new Where($where), $limit, $page, 'ORDER BY created DESC');
 
-        $personMap = $app['db']->getModel('\Model\PersonModel');
+        $personMap = $this->pomm['db']->getModel('\App\Model\PersonModel');
         $pager->getIterator()->registerFilter(function($values) use($personMap) {
             $values['person'] = $personMap
                 ->findByPk(['id' => $values['person_id']]);
             return $values;
         });
 
-        return $app['twig']->render(
+        return $this->render(
             'expense/list.html.twig',
             compact('pager')
         );
     }
 
-    public function addExpense(Application $app)
+    public function addExpense(): Response
     {
-        return $app->handle(
-            Request::create('/expenses/-1/edit', 'GET'),
-            HttpKernelInterface::SUB_REQUEST
+        return $this->forward(
+            'app.controller.expenses:editExpense',
+            ['id' => -1]
         );
     }
 
-    public function createExpense(Application $app, Request $request)
+    public function createExpense(Request $request): Response
     {
-        return $app->handle(
-            Request::create('/expenses/-1/edit', 'POST', $request->request->all()),
-            HttpKernelInterface::SUB_REQUEST
+        return $this->forward(
+            'app.controller.expenses:saveExpense',
+            ['id' => -1]
         );
     }
 
-    public function editExpense(Application $app, $id)
+    public function editExpense(int $id): Response
     {
-        $map = $app['db']->getModel('\Model\ExpenseModel');
+        $map = $this->pomm['db']->getModel('\App\Model\ExpenseModel');
 
         if ($id > 0) {
             $expense = $map->findByPk(['id' => $id]);
             if (is_null($expense)) {
-                $app->abort(404, "Dépense #$id inconnue");
+                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException("Dépense #$id inconnue");
             }
         }
         else {
@@ -91,25 +92,25 @@ class Expenses implements ControllerProviderInterface
             ]);
         }
 
-        $persons = $app['db']->getModel('\Model\PersonModel')
+        $persons = $this->pomm['db']->getModel('\App\Model\PersonModel')
             ->findAll();
 
-        return $app['twig']->render(
+        return $this->render(
             'expense/edit.html.twig',
             compact('expense', 'persons')
         );
     }
 
-    public function saveExpense(Application $app, Request $request, $id)
+    public function saveExpense(Request $request, int $id): Response
     {
-        $map = $app['db']->getModel('\Model\ExpenseModel');
+        $map = $this->pomm['db']->getModel('\App\Model\ExpenseModel');
         $data = $request->request->get('expense');
 
         if ($id > 0) {
             $pk = ['id' => $id];
             $expense = $map->findByPk($pk);
             if (is_null($expense)) {
-                $app->abort(404, "Dépense #$id inconnue");
+                throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException("Dépense #$id inconnue");
             }
             $map->updateByPk($pk, $data);
 
@@ -118,28 +119,25 @@ class Expenses implements ControllerProviderInterface
             $expense = $map->createAndSave($data);
         }
 
-        $app['session']->getFlashBag()
-            ->add('success', 'Dépense sauvegardée');
-        return $app->redirect('/');
+        $this->addFlash('success', 'Dépense sauvegardée');
+        return $this->redirect('/');
     }
 
-    public function deleteExpense(Application $app, $id)
+    public function deleteExpense(int $id): Response
     {
-        $map = $app['db']->getModel('\Model\ExpenseModel');
+        $map = $this->pomm['db']->getModel('\App\Model\ExpenseModel');
         $pk = ['id' => $id];
 
         $expense = $map->findByPk($pk);
         if ($expense !== null) {
             $map->deleteByPk($pk);
 
-            $app['session']->getFlashBag()
-                ->add('success', 'Dépenese supprimée');
+            $this->addFlash('success', 'Dépenese supprimée');
         }
         else {
-            $app->abort(404, "Dépense $id inconnue");
+            throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException("Dépense #$id inconnue");
         }
 
-        return $app->redirect('/');
+        return $this->redirect('/');
     }
 }
-
