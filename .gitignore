@@ -1,8 +1,16 @@
 /behat.yml
 /bin/
+!bin/console
 /cache/
 /composer.lock
 /composer.phar
-/src/config/current.php
+/symfony.lock
 /vendor/
 /web/lib/
+
+###> symfony/framework-bundle ###
+.env
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
