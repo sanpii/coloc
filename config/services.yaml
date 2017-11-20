@@ -3,26 +3,18 @@
 parameters:
 
 services:
-    # default configuration for services in *this* file
-    _defaults:
-        # automatically injects dependencies in your services
-        autowire: true
-        # automatically registers your services as commands, event subscribers, etc.
-        autoconfigure: true
-        # this means you cannot fetch services directly from the container via $container->get()
-        # if you need to do this, you can override this setting on individual services
-        public: false
+    app.controller.index:
+        class: App\Controller\Index
+        arguments: ['@templating', '@pomm']
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/*'
-        # you can exclude directories or files
-        # but if a service is unused, it's removed anyway
-        exclude: '../src/{DataFixtures,Entity,Migrations,Tests}'
+    app.controller.expenses:
+        class: App\Controller\Expenses
+        arguments: ['@templating', '@pomm']
 
-    # controllers are imported separately to make sure they
-    # have the tag that allows actions to type-hint services
-    App\Controller\:
-        resource: '../src/Controller'
-        tags: ['controller.service_arguments']
+    app.controller.payments:
+        class: App\Controller\Payments
+        arguments: ['@templating', '@pomm']
+
+framework:
+    templating:
+        engines: ['twig']

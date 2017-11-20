@@ -1,40 +1,55 @@
 <?php
+declare(strict_types = 1);
 
-namespace Controller;
+namespace App\Controller;
 
-use \Silex\Application;
-use \Silex\Api\ControllerProviderInterface;
+use \PommProject\Foundation\Pomm;
+use \PommProject\Foundation\Where;
+use \Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use \Symfony\Component\HttpFoundation\Request;
+use \Symfony\Component\HttpFoundation\Response;
 use \Symfony\Component\HttpKernel\HttpKernelInterface;
+use \Symfony\Component\Templating\EngineInterface;
 
-class Index implements ControllerProviderInterface
+class Index implements ContainerAwareInterface
 {
-    public function connect(Application $app)
+    use \Symfony\Bundle\FrameworkBundle\Controller\ControllerTrait;
+    use \Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+    private $pomm;
+    private $templating;
+
+    public function __construct(EngineInterface $templating, Pomm $pomm)
     {
-        $controllers = $app['controllers_factory'];
-
-        $controllers->get('/login', [$this, 'login']);
-        $controllers->get('/', [$this, 'index']);
-
-        return $controllers;
+        $this->templating = $templating;
+        $this->pomm = $pomm;
     }
 
-    public function login(Application $app, Request $request)
+    public function login(Request $request): Response
     {
-        return $app['twig']->render('login.html.twig', [
-            'error' => $app['security.last_error']($request),
-            'last_username' => $app['session']->get('_security.last_username'),
+        $authenticationUtils = $this->container->get('security.authentication_utils');
+
+        return $this->render('login.html.twig', [
+            'error' => $authenticationUtils->getLastAuthenticationError(),
+            'last_username' => $authenticationUtils->getLastUsername(),
         ]);
     }
 
-
-    public function index(Application $app, Request $request)
+    public function loginCheck(): Response
     {
-        $url = '/expenses?done=false&' . http_build_query($request->query->all());
+        throw new \Exception('this should not be reached!');
+    }
 
-        return $app->handle(
-            Request::create($url, 'GET'),
-            HttpKernelInterface::SUB_REQUEST
+    public function logout(): Response
+    {
+        throw new \Exception('this should not be reached!');
+    }
+
+    public function index(Request $request): Response
+    {
+        return $this->forward(
+            'app.controller.expenses:listExpenses',
+            ['done' => false]
         );
     }
 }
