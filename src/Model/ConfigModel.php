@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace App\Model;
 
 use PommProject\ModelManager\Model\Model;
 use PommProject\ModelManager\Model\Projection;
@@ -8,8 +8,8 @@ use PommProject\ModelManager\Model\ModelTrait\WriteQueries;
 
 use PommProject\Foundation\Where;
 
-use Model\AutoStructure\Config as ConfigStructure;
-use Model\Config;
+use App\Model\AutoStructure\Config as ConfigStructure;
+use App\Model\Config;
 
 /**
  * ConfigModel
@@ -32,7 +32,7 @@ class ConfigModel extends Model
     public function __construct()
     {
         $this->structure = new ConfigStructure;
-        $this->flexible_entity_class = '\Model\Config';
+        $this->flexible_entity_class = '\App\Model\Config';
     }
 
      public function get($key, $default = null)

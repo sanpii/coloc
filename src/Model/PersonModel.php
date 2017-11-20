@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace App\Model;
 
 use PommProject\ModelManager\Model\Model;
 use PommProject\ModelManager\Model\Projection;
@@ -8,8 +8,8 @@ use PommProject\ModelManager\Model\ModelTrait\WriteQueries;
 
 use PommProject\Foundation\Where;
 
-use Model\AutoStructure\Person as PersonStructure;
-use Model\Person;
+use App\Model\AutoStructure\Person as PersonStructure;
+use App\Model\Person;
 
 /**
  * PersonModel
@@ -32,6 +32,6 @@ class PersonModel extends Model
     public function __construct()
     {
         $this->structure = new PersonStructure;
-        $this->flexible_entity_class = '\Model\Person';
+        $this->flexible_entity_class = '\App\Model\Person';
     }
 }

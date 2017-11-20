@@ -1,6 +1,6 @@
 <?php
 
-namespace Model;
+namespace App\Model;
 
 use PommProject\ModelManager\Model\Model;
 use PommProject\ModelManager\Model\Projection;
@@ -8,8 +8,8 @@ use PommProject\ModelManager\Model\ModelTrait\WriteQueries;
 
 use PommProject\Foundation\Where;
 
-use Model\AutoStructure\Payment as PaymentStructure;
-use Model\Payment;
+use App\Model\AutoStructure\Payment as PaymentStructure;
+use App\Model\Payment;
 
 /**
  * PaymentModel
@@ -34,13 +34,13 @@ class PaymentModel extends Model
     public function __construct()
     {
         $this->structure = new PaymentStructure;
-        $this->flexible_entity_class = '\Model\Payment';
+        $this->flexible_entity_class = '\App\Model\Payment';
     }
 
     public function deleteByPk($pk)
     {
         $map = $this->getSession()
-            ->getModel('\Model\ExpenseModel');
+            ->getModel('\App\Model\ExpenseModel');
 
         $sql = sprintf(
             'UPDATE %s SET payment_id = null WHERE payment_id = %d',
