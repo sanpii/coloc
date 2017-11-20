@@ -15,6 +15,10 @@ services:
         class: App\Controller\Payments
         arguments: ['@templating', '@pomm']
 
+    app.security.provider:
+        class: App\Security\Provider
+        arguments: ['@pomm']
+
 framework:
     templating:
         engines: ['twig']

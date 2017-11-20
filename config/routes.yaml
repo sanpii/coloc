@@ -3,6 +3,21 @@ index:
     defaults: { _controller: app.controller.index:index }
     methods: [GET]
 
+login:
+    path: /login
+    defaults: { _controller: app.controller.index:login }
+    methods: [GET]
+
+login_check:
+    path: /login_check
+    defaults: { _controller: app.controller.index:loginCheck }
+    methods: [POST]
+
+logout:
+    path: /logout
+    defaults: { _controller: app.controller.index:logout }
+    methods: [GET]
+
 expenses_index:
     path: /expenses
     defaults: { _controller: app.controller.expenses:listExpenses }
