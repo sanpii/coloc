@@ -55,25 +55,25 @@ payments_index:
 
 payments_add:
     path: /payments/add
-    defaults: { _controller: app.controller.payments:addExpense }
+    defaults: { _controller: app.controller.payments:addPayment }
     methods: [GET]
 
 payments_create:
     path: /payments/add
-    defaults: { _controller: app.controller.payments:createExpense }
+    defaults: { _controller: app.controller.payments:createPayment }
     methods: [POST]
 
 payments_edit:
     path: /payments/{id}/edit
-    defaults: { _controller: app.controller.payments:editExpense }
+    defaults: { _controller: app.controller.payments:editPayment }
     methods: [GET]
 
 payments_save:
     path: /payments/{id}/edit
-    defaults: { _controller: app.controller.payments:saveExpense }
+    defaults: { _controller: app.controller.payments:savePayment }
     methods: [POST]
 
 payments_delete:
     path: /payments/{id}/delete
-    defaults: { _controller: app.controller.payments:deleteExpense }
+    defaults: { _controller: app.controller.payments:deletePayment }
     methods: [GET]

@@ -49,7 +49,7 @@ class Payments implements ContainerAwareInterface
     public function addPayment(): Response
     {
         return $this->forward(
-            'app.controller.payments:edit',
+            'app.controller.payments:editPayment',
             ['id' => -1]
         );
     }
