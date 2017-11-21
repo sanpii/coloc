@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 require __DIR__.'/../vendor/autoload.php';
 
 // The check is to ensure we don't use .env in production
-$env = getenv('APP_ENV') ?: 'dev';
+$env = getenv('APP_ENV') ?: 'prod';
 $dotenv = __DIR__ . '/../.env';
 if (is_file($dotenv) && $env === 'dev' && class_exists(Dotenv::class)) {
     (new Dotenv)
