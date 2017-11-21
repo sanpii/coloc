@@ -14,6 +14,11 @@ final class User implements UserInterface
         $this->person = $person;
     }
 
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array([$this->person, $name], $arguments);
+    }
+
     public function getRoles()
     {
         return ['ROLE_USER'];
