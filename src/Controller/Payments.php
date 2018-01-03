@@ -56,8 +56,8 @@ class Payments implements ContainerAwareInterface
 
     public function createPayment(Request $request): Response
     {
-        return $this->formard(
-            'app.controller.payements:save',
+        return $this->forward(
+            'app.controller.payments:savePayment',
             $request->request->all() + ['id' => -1]
         );
     }
