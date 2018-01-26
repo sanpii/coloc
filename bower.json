@@ -1,7 +1,7 @@
 {
     "name": "coloc",
     "dependencies": {
-        "bootstrap": "v4.0.0-beta",
+        "bootstrap": "~4.0",
         "Font-Awesome": "~4.7"
     }
 }
