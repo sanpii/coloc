@@ -6,14 +6,17 @@ services:
     app.controller.index:
         class: App\Controller\Index
         arguments: ['@templating', '@pomm']
+        public: true
 
     app.controller.expenses:
         class: App\Controller\Expenses
         arguments: ['@templating', '@pomm']
+        public: true
 
     app.controller.payments:
         class: App\Controller\Payments
         arguments: ['@templating', '@pomm']
+        public: true
 
     app.security.provider:
         class: App\Security\Provider
