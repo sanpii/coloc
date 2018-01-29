@@ -38,7 +38,7 @@ class Expense extends RowStructure
             ->setPrimaryKey(['id'])
             ->addField('id', 'int4')
             ->addField('person_id', 'int4')
-            ->addField('price', 'float4')
+            ->addField('price', 'numeric')
             ->addField('created', 'timestamp')
             ->addField('shop', 'varchar')
             ->addField('description', 'varchar')
